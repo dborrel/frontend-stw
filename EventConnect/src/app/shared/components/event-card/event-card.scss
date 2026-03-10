@@ -1,0 +1,39 @@
+.card{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  transition:0.25s;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.card img{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+}
+
+.info{
+  padding:16px;
+}
+
+.info h3{
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+.date,.location{
+  font-size:14px;
+  color:#555;
+}
+
+.info a{
+  float:right;
+  font-size:13px;
+  color:#2563eb;
+  font-weight:600;
+}
