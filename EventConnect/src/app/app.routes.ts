@@ -13,6 +13,10 @@ import { StatsComponent } from './features/stats/stats.component';
 import { FriendsComponent } from './features/friends/friends.component';
 import { ChatDetailComponent } from './features/chat-detail/chat-detail.component';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
+import { AdminLayoutComponent } from './features/admin/layout/admin-layout.component';
+import { AdminDashboardComponent } from './features/admin/pages/admin-dashboard/admin-dashboard.component';
+import { AdminUsersComponent } from './features/admin/pages/admin-users/admin-users.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -28,5 +32,9 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'stats', component: StatsComponent },
   { path: 'friends', component: FriendsComponent, canActivate: [authGuard] },
-  { path: 'chat/:conversationId', component: ChatDetailComponent, canActivate: [authGuard] }
+  { path: 'chat/:conversationId', component: ChatDetailComponent, canActivate: [authGuard] },
+  { path: 'admin', component: AdminLayoutComponent, canActivate: [authGuard, adminGuard], canActivateChild: [adminGuard], children: [
+    { path: 'dashboard', component: AdminDashboardComponent },
+    { path: 'users', component: AdminUsersComponent }
+  ] }
 ];
