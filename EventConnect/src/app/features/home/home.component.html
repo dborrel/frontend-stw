@@ -30,32 +30,39 @@
 
 <section class="advisor">
   <div class="advisor-card">
-
     <div class="advisor-content">
       <h2>SpAlk te aconseja, ¿qué buscas?</h2>
 
-      <p class="question">¿Qué tipo de quedada quieres?</p>
-
+      <p class="question">¿Con quién vas a salir?</p>
       <div class="options">
-        <button 
-          *ngFor="let option of options"
-          [class.active]="selectedOption === option"
-          (click)="selectOption(option)">
-          {{ option.label }}
+        <button
+          *ngFor="let c of companions"
+          [class.active]="selectedCompanion === c"
+          (click)="selectCompanion(c)">
+          {{ c.label }}
         </button>
       </div>
 
-      <p class="response" *ngIf="response">
-        {{ response }}
-      </p>
+      <ng-container *ngIf="selectedCompanion">
+        <p class="question" style="margin-top: 16px">¿Cómo te apetece el plan?</p>
+        <div class="options">
+          <button
+            *ngFor="let v of vibes"
+            [class.active]="selectedVibe === v"
+            (click)="selectVibe(v)">
+            {{ v.label }}
+          </button>
+        </div>
+      </ng-container>
 
-      <button class="cta" *ngIf="response" (click)="goToActivity()">
-        Ir a la actividad
+      <p class="response" *ngIf="advisorLoading">✨ Pensando...</p>
+      <p class="response" *ngIf="response && !advisorLoading">{{ response }}</p>
+
+      <button class="cta" *ngIf="response && !advisorLoading" (click)="goToActivity()">
+        Ver eventos relacionados
       </button>
     </div>
 
-    <!-- Avatar -->
     <img src="/assets/images/Spike.svg" class="advisor-avatar" />
-
   </div>
 </section>
