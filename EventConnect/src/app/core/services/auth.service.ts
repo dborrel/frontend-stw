@@ -13,7 +13,7 @@ interface LoginPayload {
 
 interface GoogleLoginPayload {
   token: string;
-  isRegistering?: boolean; 
+  isRegistering?: boolean;
 }
 
 interface RegisterPayload {
@@ -50,8 +50,14 @@ export class AuthService {
   private rawHttp = new HttpClient(this.httpBackend);
   private apiUrl = environment.apiUrl + '/auth';
 
+  // Cache del usuario autenticado
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  readonly currentUser$ = this.currentUserSubject.asObservable();
+
   getProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/profile`, { withCredentials: true });
+    return this.http.get(`${this.apiUrl}/profile`, { withCredentials: true }).pipe(
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 
   refresh(): Observable<any> {
@@ -59,23 +65,32 @@ export class AuthService {
   }
 
   login(payload: LoginPayload): Observable<AuthResponse> {
-    return this.rawHttp.post<AuthResponse>(`${this.apiUrl}/login`, payload, { withCredentials: true });
+    return this.rawHttp.post<AuthResponse>(`${this.apiUrl}/login`, payload, { withCredentials: true }).pipe(
+      tap((res) => { if (res?.user) this.currentUserSubject.next(res.user); })
+    );
   }
 
   loginWithGoogle(payload: GoogleLoginPayload): Observable<AuthResponse> {
-    return this.rawHttp.post<AuthResponse>(`${this.apiUrl}/google`, payload, { withCredentials: true });
+    return this.rawHttp.post<AuthResponse>(`${this.apiUrl}/google`, payload, { withCredentials: true }).pipe(
+      tap((res) => { if (res?.user) this.currentUserSubject.next(res.user); })
+    );
   }
 
   register(payload: RegisterPayload): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload, { withCredentials: true });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload, { withCredentials: true }).pipe(
+      tap((res) => { if (res?.user) this.currentUserSubject.next(res.user); })
+    );
   }
 
   logout(): void {
     this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe();
+    this.currentUserSubject.next(null);
   }
 
   updateProfile(payload: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/profile`, payload, { withCredentials: true });
+    return this.http.put(`${this.apiUrl}/profile`, payload, { withCredentials: true }).pipe(
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 
   isLoggedIn$(): Observable<boolean> {
@@ -83,14 +98,13 @@ export class AuthService {
       map(() => true),
       catchError(() => of(false)),
       take(1),
-      // Si no hay ningún valor, emitir false
       defaultIfEmpty(false)
     );
   }
 
-  getCurrentUser() {
-    // Se puede obtener el usuario desde el backend si es necesario
-    return null;
+  // Devuelve el usuario cacheado en memoria (puede ser null si aún no se ha cargado)
+  getCurrentUser(): any {
+    return this.currentUserSubject.getValue();
   }
 
   forgotPassword(email: string) {
@@ -106,5 +120,4 @@ export class AuthService {
       { token, password }
     );
   }
-  
 }
