@@ -12,11 +12,11 @@ import { StripHtmlPipe } from '../../shared/pipes/strip-html.pipe';
   templateUrl: './event-detail.component.html',
   styleUrl: './event-detail.component.scss',
 })
-
 export class EventDetailComponent implements OnInit {
   event: any = null;
   loading = true;
   error = false;
+  isAttending = false; 
 
   private route = inject(ActivatedRoute);
   private eventService = inject(EventService);
@@ -31,15 +31,35 @@ export class EventDetailComponent implements OnInit {
           next: (res) => {
             this.event = res.data;
             this.loading = false;
-            this.cdr.detectChanges(); // ← añade esto
+            this.cdr.detectChanges();
           },
           error: () => {
             this.error = true;
             this.loading = false;
-            this.cdr.detectChanges(); // ← y esto
+            this.cdr.detectChanges();
           }
         });
       }
     }
+  }
+
+  onAttendClick() {
+    if (!this.event || !this.event._id) return;
+
+    this.eventService.toggleAttend(this.event._id).subscribe({
+      next: (res) => {
+        this.isAttending = res.isAttending; 
+        this.cdr.detectChanges();
+        alert(res.message); 
+      },
+      error: (err) => {
+        console.error('Error al apuntarse al evento:', err);
+        if (err.status === 401) {
+          alert('Tienes que iniciar sesión para apuntarte.');
+        } else {
+          alert('Hubo un problema al apuntarte. Inténtalo de nuevo.');
+        }
+      }
+    });
   }
 }

@@ -89,6 +89,12 @@
             </span>
           </div>
 
+          <button 
+            class="attend-btn" 
+            [class.active]="isAttending" 
+            (click)="onAttendClick()">
+            {{ isAttending ? 'Ya estás apuntado' : 'Apuntarme al evento' }}
+          </button>
           @if (event.sourceUrl) {
             <a [href]="event.sourceUrl" target="_blank" class="source-btn">
               Ver fuente oficial →
@@ -96,7 +102,6 @@
           }
         </div>
       </aside>
-
     </div>
   </div>
 }
