@@ -27,3 +27,35 @@
   </div>
 
 </section>
+
+<section class="advisor">
+  <div class="advisor-card">
+
+    <div class="advisor-content">
+      <h2>SpAlk te aconseja, ¿qué buscas?</h2>
+
+      <p class="question">¿Qué tipo de quedada quieres?</p>
+
+      <div class="options">
+        <button 
+          *ngFor="let option of options"
+          [class.active]="selectedOption === option"
+          (click)="selectOption(option)">
+          {{ option.label }}
+        </button>
+      </div>
+
+      <p class="response" *ngIf="response">
+        {{ response }}
+      </p>
+
+      <button class="cta" *ngIf="response" (click)="goToActivity()">
+        Ir a la actividad
+      </button>
+    </div>
+
+    <!-- Avatar -->
+    <img src="/assets/images/Spike.svg" class="advisor-avatar" />
+
+  </div>
+</section>

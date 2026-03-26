@@ -11,97 +11,107 @@
     <a routerLink="/home">← Volver al inicio</a>
   </div>
 } @else {
-  <div class="detail-wrapper">
+  <div class="detail-page">
 
-    <div class="hero-image">
-      <img [src]="event.imageUrl ? 'https:' + event.imageUrl : 'assets/images/zaragoza.png'"
-           [alt]="event.title">
-      <div class="hero-overlay">
-        <div class="hero-meta">
-          <span class="category-badge">{{ event.category }}</span>
-          @if (event.isFree) {
-            <span class="free-badge">Gratuito</span>
-          }
-        </div>
-        <h1>{{ event.title }}</h1>
-        <div class="hero-info">
-          @if (event.startDate) {
-            <span>🕐 {{ event.startDate | date:'dd MMM yyyy · HH:mm' }}</span>
-          }
-          <span>📍 {{ event.locationName }}</span>
-        </div>
-      </div>
+    <div class="back-bar">
+      <a routerLink="/home">← Volver</a>
     </div>
 
-    <div class="content-grid">
+    <div class="detail-layout">
 
-      <div class="main-content">
-        <div class="back-link">
-          <a routerLink="/home">← Volver</a>
+      <div class="left-col">
+        <div class="event-image">
+          <img [src]="event.imageUrl ? 'https:' + event.imageUrl : 'assets/images/zaragoza.png'"
+               [alt]="event.title">
         </div>
 
-        <section class="description-section">
-          <h2>Sobre este evento</h2>
-          <p>{{ event.description | stripHtml }}</p>
-        </section>
-
-        @if (event.address) {
-          <section class="location-section">
-            <h2>Ubicación</h2>
-            <div class="location-card">
-              <div class="location-icon">📍</div>
-              <div>
-                <p class="location-name">{{ event.locationName }}</p>
-                <p class="location-address">{{ event.address }}</p>
+        <div class="event-info">
+          <div class="event-header">
+            <div class="event-title-block">
+              <h1>{{ event.title }}</h1>
+              <div class="badges">
+                <span class="badge category">{{ event.category }}</span>
+                @if (event.isFree) {
+                  <span class="badge free">Gratuito</span>
+                }
               </div>
             </div>
-          </section>
-        }
-      </div>
-
-      <aside class="sidebar">
-        <div class="info-card">
-          <h3>Detalles</h3>
-
-          <div class="detail-row">
-            <span class="label">Categoría</span>
-            <span class="value">{{ event.category }}</span>
-          </div>
+            </div>
 
           @if (event.startDate) {
-            <div class="detail-row">
-              <span class="label">Inicio</span>
-              <span class="value">{{ event.startDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            <div class="meta-row">
+              <span class="meta-icon">🕐</span>
+              <span>{{ event.startDate | date:'dd/MM/yyyy · HH:mm' }}</span>
             </div>
           }
 
-          @if (event.endDate) {
-            <div class="detail-row">
-              <span class="label">Fin</span>
-              <span class="value">{{ event.endDate | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-          }
-
-          <div class="detail-row">
-            <span class="label">Precio</span>
-            <span class="value" [class.free]="event.isFree">
-              {{ event.isFree ? 'Gratuito' : 'De pago' }}
-            </span>
+          <div class="meta-row">
+            <span class="meta-icon">📍</span>
+            <span>{{ event.locationName }}</span>
           </div>
 
+          <p class="description">{{ event.description | stripHtml }}</p>
+        </div>
+      </div>
+
+      <div class="right-col">
+
+        <div class="action-buttons" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
           <button 
             class="attend-btn" 
             [class.active]="isAttending" 
             (click)="onAttendClick()">
             {{ isAttending ? 'Ya estás apuntado' : 'Apuntarme al evento' }}
           </button>
+          
           @if (event.sourceUrl) {
-            <a [href]="event.sourceUrl" target="_blank" class="source-btn">
+            <a [href]="event.sourceUrl" target="_blank" class="source-btn" style="text-align: center;">
               Ver fuente oficial →
             </a>
           }
         </div>
-      </aside>
+
+        <div class="mini-map-card">
+          @if (event.latitude != null && event.longitude != null) {
+            <div id="mini-map"></div>
+          } @else {
+            <div class="no-map">
+              <span>📍</span>
+              <p>{{ event.locationName }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="chat-card">
+          <div class="chat-tabs">
+            <button class="chat-tab" [class.active]="activeTab === 'chat'" (click)="activeTab = 'chat'">Chat</button>
+            <button class="chat-tab" [class.active]="activeTab === 'amigos'" (click)="activeTab = 'amigos'">Amigos</button>
+          </div>
+
+          @if (activeTab === 'chat') {
+            <div class="chat-messages">
+              <div class="empty-chat">
+                <span>💬</span>
+                <p>Sé el primero en escribir en este evento</p>
+              </div>
+            </div>
+            <div class="chat-input-bar">
+              <input placeholder="Escribe aquí tu mensaje..." disabled>
+              <button disabled>→</button>
+            </div>
+          }
+
+          @if (activeTab === 'amigos') {
+            <div class="chat-messages">
+              <div class="empty-chat">
+                <span>👥</span>
+                <p>No hay amigos asistiendo a este evento</p>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
     </div>
   </div>
 }
