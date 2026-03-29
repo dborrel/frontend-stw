@@ -66,6 +66,25 @@ export interface AdminEventsResponse {
   events: AdminEvent[];
 }
 
+export interface AdminEventDetail {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  address: string;
+  imageUrl: string;
+  status: string;
+  enrolled: number;
+  isFree: boolean;
+}
+
+export interface AdminEventDetailResponse {
+  event: AdminEventDetail;
+}
+
 export interface AdminReport {
   id: string;
   type: string;
@@ -210,6 +229,30 @@ export class AdminService {
 
   getEvents(): Observable<AdminEventsResponse> {
     return this.http.get<AdminEventsResponse>(`${this.apiUrl}/events`, {
+      withCredentials: true
+    });
+  }
+
+  getEventDetail(id: string): Observable<AdminEventDetailResponse> {
+    return this.http.get<AdminEventDetailResponse>(`${this.apiUrl}/events/${id}`, {
+      withCredentials: true
+    });
+  }
+
+  createEvent(event: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/events`, event, {
+      withCredentials: true
+    });
+  }
+
+  updateEvent(id: string, event: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/events/${id}`, event, {
+      withCredentials: true
+    });
+  }
+
+  deleteEvent(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/events/${id}`, {
       withCredentials: true
     });
   }
