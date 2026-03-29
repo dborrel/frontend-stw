@@ -77,6 +77,50 @@ export interface AdminReportsSummaryResponse {
   summary: AdminReportsSummary;
 }
 
+export interface AdminSettings {
+  general: {
+    appName: string;
+    description: string;
+    contactEmail: string;
+    contactPhone: string;
+    timezone: string;
+    defaultLanguage: string;
+  };
+  moderation: {
+    requireEventApproval: boolean;
+    autoDetectWords: boolean;
+    autoBanAfterReports: boolean;
+    notifyModeratorsOnReports: boolean;
+    bannedWords: string[];
+  };
+  notifications: {
+    notifyReportedUsers: boolean;
+    notifyFlaggedContent: boolean;
+    weeklySummary: boolean;
+    systemAlerts: boolean;
+  };
+  backup: any;
+  maintenance: any;
+}
+
+export interface AdminSettingsResponse {
+  settings: AdminSettings;
+}
+
+export interface AdminSystemStatus {
+  isOperational: boolean;
+  systemLoad: string;
+  lastUpdate: string;
+  lastBackup: string;
+  nextBackup: string;
+  backupFrequency: string;
+  lastUpdateDate: string;
+}
+
+export interface AdminSystemStatusResponse {
+  status: AdminSystemStatus;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -114,6 +158,54 @@ export class AdminService {
       : `${this.apiUrl}/reports`;
     
     return this.http.get<AdminReportsResponse>(url, {
+      withCredentials: true
+    });
+  }
+
+  getSettings(): Observable<AdminSettingsResponse> {
+    return this.http.get<AdminSettingsResponse>(`${this.apiUrl}/settings`, {
+      withCredentials: true
+    });
+  }
+
+  updateGeneralSettings(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/settings/general`, data, {
+      withCredentials: true
+    });
+  }
+
+  updateModerationSettings(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/settings/moderation`, data, {
+      withCredentials: true
+    });
+  }
+
+  updateNotificationSettings(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/settings/notifications`, data, {
+      withCredentials: true
+    });
+  }
+
+  getSystemStatus(): Observable<AdminSystemStatusResponse> {
+    return this.http.get<AdminSystemStatusResponse>(`${this.apiUrl}/system/status`, {
+      withCredentials: true
+    });
+  }
+
+  clearCache(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/system/cache`, {}, {
+      withCredentials: true
+    });
+  }
+
+  optimizeDatabase(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/system/optimize`, {}, {
+      withCredentials: true
+    });
+  }
+
+  downloadBackup(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/backup`, {}, {
       withCredentials: true
     });
   }
